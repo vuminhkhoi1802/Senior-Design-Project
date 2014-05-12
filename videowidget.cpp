@@ -13,9 +13,6 @@
 #include <qvideowidget.h>
 #include <qvideosurfaceformat.h>
 
-//#include <opencv2/opencv.hpp>
-//using namespace cv;
-#include "gen-cpp/Tracking.h"
 
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/transport/TSocket.h>
@@ -85,7 +82,7 @@ VideoPlayer::VideoPlayer(QWidget *parent)
 //    controlLayout->addWidget(playButton);
 //    controlLayout->addWidget(positionSlider);
     controlLayout->addWidget(videostream);
-    controlLayout->addWidget(streaming);
+//    controlLayout->addWidget(streaming);
     controlLayout->addWidget(trackingButton);
     controlLayout->addWidget(Actuation);
     controlLayout->addWidget(Lighting);
@@ -221,6 +218,14 @@ void VideoPlayer::actuation_monitoring()
 
     //Get actual position
 
+    QAbstractButton *get_actual_position = new QPushButton(tr("Get Position"));
+    QObject::connect(get_actual_position,SIGNAL(clicked()), SLOT(getActualPos()));
+
+
+
+
+
+
     QObject::connect(spinner,SIGNAL(valueChanged(int)), SLOT(getActualPos()));
     QObject::connect(slider,SIGNAL(valueChanged(int)), SLOT(getActualPos()));
     QObject::connect(spinner0,SIGNAL(valueChanged(int)), SLOT(getActualPos()));
@@ -248,6 +253,8 @@ void VideoPlayer::actuation_monitoring()
     layout->addWidget(haltbutton);
     layout->addWidget(sleepbutton);
     layout->addWidget(wakebutton);
+    layout->addWidget(get_actual_position);
+
     layout->addWidget(slider);
     layout->addWidget(spinner);
     layout->addWidget(label);
@@ -266,7 +273,7 @@ void VideoPlayer::actuation_monitoring()
 void VideoPlayer::lighting_intensity()
 {
     QWidget*lighting = new QWidget;
-    lighting->setWindowTitle("Lighting Intensity");
+    lighting->setWindowTitle("Lighting Control");
 
     QLabel *label1 = new QLabel;
     label1->setText("Percentage set");
@@ -292,9 +299,20 @@ void VideoPlayer::lighting_intensity()
 
     QObject::connect(light_toggle, SIGNAL(clicked()), SLOT (lighting_toggle()));
 
+    QLabel *label2 = new QLabel;
+    label2->setText("On/Off Switch");
+
+    QAbstractButton *setOff = new QPushButton(tr("OFF"));
+    QObject::connect(setOff, SIGNAL(clicked()), SLOT(set_off()));
+
+    QAbstractButton *setOn = new QPushButton(tr("ON"));
+    QObject::connect(setOn, SIGNAL(clicked()), SLOT(set_on()));
 
     QVBoxLayout *layout1 = new QVBoxLayout;
-    layout1->addWidget(light_toggle);
+//    layout1->addWidget(light_toggle);
+    layout1->addWidget(label2);
+    layout1->addWidget(setOff);
+    layout1->addWidget(setOn);
     layout1->addWidget(slider1);
     layout1->addWidget(spinner1);
     layout1->addWidget(label1);
@@ -305,14 +323,14 @@ void VideoPlayer::lighting_intensity()
 }
 
 void VideoPlayer::lighting_toggle(){
-    QWidget *toggle = new QWidget;
-    toggle->setWindowTitle("Lighting Toggle");
+//    QWidget *toggle = new QWidget;
+//    toggle->setWindowTitle("Lighting Toggle");
 
-    QAbstractButton *setOff = new QPushButton(tr("OFF"));
-    QObject::connect(setOff, SIGNAL(clicked()), SLOT(set_off()));
+//    QAbstractButton *setOff = new QPushButton(tr("OFF"));
+//    QObject::connect(setOff, SIGNAL(clicked()), SLOT(set_off()));
 
-    QAbstractButton *setOn = new QPushButton(tr("ON"));
-    QObject::connect(setOn, SIGNAL(clicked()), SLOT(set_on()));
+//    QAbstractButton *setOn = new QPushButton(tr("ON"));
+//    QObject::connect(setOn, SIGNAL(clicked()), SLOT(set_on()));
 //    QSlider *on_off_slider = new QSlider;
 //    on_off_slider->setRange(0,1);
 //    QSpinBox *on_off_spinner = new QSpinBox;
@@ -324,13 +342,13 @@ void VideoPlayer::lighting_toggle(){
 //                     on_off_slider, SLOT(setValue(int)));
 //    on_off_spinner->setValue(0);
 
-    QBoxLayout *layout3 = new QVBoxLayout;
+//    QBoxLayout *layout3 = new QVBoxLayout;
 //    layout3->addWidget(on_off_slider);
 //    layout3->addWidget(on_off_spinner);
-    layout3->addWidget(setOn);
-    layout3->addWidget(setOff);
-    toggle->setLayout(layout3);
-    toggle->show();
+//    layout3->addWidget(setOn);
+//    layout3->addWidget(setOff);
+//    toggle->setLayout(layout3);
+//    toggle->show();
 
 
 }
@@ -341,12 +359,16 @@ void VideoPlayer::tracking_status(){
 
 
 
-    QAbstractButton *set_mode = new QPushButton(tr("Manual/Automatic"));
-    QObject::connect(set_mode,SIGNAL (clicked()), SLOT(setMode(PointMode::type)));// to be continued
+    QAbstractButton *set_auto_mode = new QPushButton(tr("Automatic"));
+    QObject::connect(set_auto_mode,SIGNAL (clicked()), SLOT(set_auto_Mode()));// to be continued
+
+    QAbstractButton *set_manual_mode = new QPushButton(tr("Manual"));
+    QObject::connect(set_manual_mode,SIGNAL(clicked()), SLOT(set_manual_Mode()));
 
     QBoxLayout *layout4 = new QHBoxLayout;
 
-    layout4->addWidget(set_mode);
+    layout4->addWidget(set_auto_mode);
+    layout4->addWidget(set_manual_mode);
 //    layout4->addWidget(getActualPos);
     tracking_board->setLayout(layout4);
     tracking_board->show();
@@ -363,24 +385,32 @@ void VideoPlayer::set_on(){
     Client->setOnOff(true);
 }
 
-void VideoPlayer::getActualPos(Coordinates &_return){
+void VideoPlayer::getActualPos(){
+    QWidget*actuation_position = new QWidget;
+    actuation_position->setWindowTitle("Actuation Positioning");
+    Coordinates _return;
+
     Client->getActualPos(_return);
+    QLabel *position_label = new QLabel(tr("Actual Position"));
+    QString Qs = QString::number(_return.x, _return.y);
+    QLineEdit *position_display = new QLineEdit;
+    position_display->setText(Qs);
+
+    QBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(position_label);
+    layout->addWidget(position_display);
+    actuation_position->setLayout(layout);
+    actuation_position->show();
+
 }
 
-void VideoPlayer::send_getActualPos(){
-    Client->send_getActualPos();
-}
-
-void VideoPlayer::calibrate(){
-    Client->calibrate();
-}
 
 void VideoPlayer::get_video(){
     system("avconv -f video4linux2 -i /dev/video0 -vcodec mpeg2video -r 25 -pix_fmt yuv420p -me_method epzs -b 2600k -bt 256k -f rtp rtp://153.106.112.178:8080");
 
 }
 
-void VideoPlayer::take_video(){
+void VideoPlayer::take_video(){ //done
    system("gst-launch-0.10 -e udpsrc port=5000 caps=\"application/x-rtp, "
                 "media=video, clock-rate=90000, "
                 "encoding-name=JPEG, payload=96\" "
@@ -396,18 +426,31 @@ void VideoPlayer::setIntensity(const int intens){
     Client->setIntensity(intens);
 }
 
-void VideoPlayer::halt(){
+
+void VideoPlayer::calibrate(){ //done
+    Client->calibrate();
+}
+
+void VideoPlayer::halt(){ //done
     Client->halt();
 }
 
-void VideoPlayer::sleep(){
+void VideoPlayer::sleep(){ //done
     Client->sleep();
 }
 
-void VideoPlayer::wake(){
+void VideoPlayer::wake(){ //done
     Client->wake();
 }
 
-void VideoPlayer::setMode(const PointMode::type mode){
-    Client->setMode(mode);
+void VideoPlayer::set_auto_Mode(){ //done
+    Client->setMode(PointMode::AUTOMATIC);
+}
+
+void VideoPlayer::set_manual_Mode(){ //done
+    Client->setMode(PointMode::MANUAL);
+}
+
+void VideoPlayer::setPos(){
+    //Client->setPos();
 }

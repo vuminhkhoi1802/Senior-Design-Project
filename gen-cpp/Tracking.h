@@ -1220,6 +1220,9 @@ class Tracking_getActualPos_presult {
 
 };
 
+
+//take it from here
+
 class TrackingClient : virtual public TrackingIf {
  public:
   TrackingClient(boost::shared_ptr< ::apache::thrift::protocol::TProtocol> prot) :

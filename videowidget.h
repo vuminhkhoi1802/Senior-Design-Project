@@ -12,6 +12,8 @@
 #include <vlc-qt/Media.h>
 #include <vlc-qt/MediaPlayer.h>
 
+
+#include <QLabel>
 #include <QLCDNumber>
 #include <QPlainTextEdit>
 #include <QLineEdit>
@@ -48,22 +50,23 @@ public slots:
 
     void set_off();
     void set_on();
-    void getActualPos(Coordinates& _return);
 
-    void setMode(const PointMode::type mode);
 
+    void set_auto_Mode();
+    void set_manual_Mode();
 //    void recv_setIntensity();
     void setIntensity(const int intens);
 
     //Lighting Thrift
     int8_t getIntensity();
     //Actuation Thrift
-    void send_getActualPos();
+
     void calibrate();
     void halt();
     void sleep();
     void wake();
-
+    void setPos();
+    void getActualPos();
 private slots:
     void mediaStateChanged(QMediaPlayer::State state);
     void positionChanged(qint64 position);
