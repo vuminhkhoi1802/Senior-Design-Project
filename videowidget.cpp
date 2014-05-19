@@ -127,16 +127,6 @@ void VideoPlayer::openFile()
     }
 }
 
-//void VideoPlayer::openURL()
-//{
-//    errorLabel->setText("cannot open the indicated URL");
-//    QString url = QInputDialog::getText(this, tr("Open URL"), tr("Enter the URL"));
-
-//    if (url.isEmpty())
-//        return;
-//    _media = new VlcMedia(url, _instance);
-
-//}
 
 void VideoPlayer::play()
 {
@@ -289,12 +279,13 @@ void VideoPlayer::lighting_intensity()
     QObject::connect(slider1, SIGNAL(valueChanged(int)),
                      spinner1, SLOT(setValue(int)));
 
-
     QObject::connect(spinner1,SIGNAL(valueChanged(int)), SLOT(setIntensity(const int)));
     QObject::connect(slider1,SIGNAL(valueChanged(int)), SLOT(setIntensity(const int)));
 
 
-    spinner1->setValue(0);
+    spinner1->setValue(100);
+
+
     QAbstractButton *light_toggle = new QPushButton(tr("Lighting Control"));
 
     QObject::connect(light_toggle, SIGNAL(clicked()), SLOT (lighting_toggle()));
@@ -391,14 +382,22 @@ void VideoPlayer::getActualPos(){
     Coordinates _return;
 
     Client->getActualPos(_return);
-    QLabel *position_label = new QLabel(tr("Actual Position"));
-    QString Qs = QString::number(_return.x, _return.y);
-    QLineEdit *position_display = new QLineEdit;
-    position_display->setText(Qs);
+    QLabel *position_label_x = new QLabel(tr("Actual Position X"));
+    QString Qs = QString::number(_return.x);
+    QLineEdit *position_display_x = new QLineEdit;
+    position_display_x->setText(Qs);
+
+    QLabel *position_label_y = new QLabel(tr("Actual Position Y"));
+    QString Qs2 = QString::number(_return.y);
+    QLineEdit *position_display_y = new QLineEdit;
+    position_display_y->setText(Qs2);
 
     QBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(position_label);
-    layout->addWidget(position_display);
+    layout->addWidget(position_label_x);
+    layout->addWidget(position_display_x);
+    layout->addWidget(position_label_y);
+    layout->addWidget(position_display_y);
+
     actuation_position->setLayout(layout);
     actuation_position->show();
 
