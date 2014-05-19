@@ -216,10 +216,10 @@ void VideoPlayer::actuation_monitoring()
 
 
 
-    QObject::connect(spinner,SIGNAL(valueChanged(int)), SLOT(getActualPos()));
-    QObject::connect(slider,SIGNAL(valueChanged(int)), SLOT(getActualPos()));
-    QObject::connect(spinner0,SIGNAL(valueChanged(int)), SLOT(getActualPos()));
-    QObject::connect(slider0,SIGNAL(valueChanged(int)), SLOT(getActualPos()));
+    QObject::connect(spinner,SIGNAL(valueChanged(int)), SLOT(setPosition(int)));
+    QObject::connect(slider,SIGNAL(valueChanged(int)), SLOT(setPosition(int)));
+    QObject::connect(spinner0,SIGNAL(valueChanged(int)), SLOT(setPosition(int)));
+    QObject::connect(slider0,SIGNAL(valueChanged(int)), SLOT(setPosition(int)));
 
 
     //halt
@@ -450,6 +450,6 @@ void VideoPlayer::set_manual_Mode(){ //done
     Client->setMode(PointMode::MANUAL);
 }
 
-void VideoPlayer::setPos(){
-    //Client->setPos();
+void VideoPlayer::setPos(int coord){
+//    Client->setPos();
 }

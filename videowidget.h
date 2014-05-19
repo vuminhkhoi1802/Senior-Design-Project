@@ -65,7 +65,7 @@ public slots:
     void halt();
     void sleep();
     void wake();
-    void setPos();
+    void setPos(int coord);
     void getActualPos();
 private slots:
     void mediaStateChanged(QMediaPlayer::State state);
