@@ -183,9 +183,9 @@ void VideoPlayer::actuation_monitoring()
     QSpinBox *spinner = new QSpinBox;
     QSlider *slider = new QSlider(Qt::Horizontal);
     QLabel *label = new QLabel;
-    label->setText("panning (degree)");
-    spinner->setRange(0,360);
-    slider->setRange(0,360);
+    label->setText("panning X");
+    spinner->setRange(0,10000);
+    slider->setRange(0,10000);
 
     QObject::connect(spinner, SIGNAL(valueChanged(int)),
                      slider, SLOT(setValue(int)));
@@ -196,9 +196,9 @@ void VideoPlayer::actuation_monitoring()
     QSpinBox *spinner0 = new QSpinBox;
     QSlider *slider0 = new QSlider(Qt::Horizontal);
     QLabel *label0 = new QLabel;
-    label0->setText("tilting (degree)");
-    spinner0->setRange(0,180);
-    slider0->setRange(0,180);
+    label0->setText("tilting Y");
+    spinner0->setRange(0,10000);
+    slider0->setRange(0,10000);
 
     QObject::connect(spinner0, SIGNAL(valueChanged(int)),
                      slider0, SLOT(setValue(int)));
@@ -216,10 +216,11 @@ void VideoPlayer::actuation_monitoring()
 
 
 
-    QObject::connect(spinner,SIGNAL(valueChanged(int)), SLOT(setPosition(int)));
-    QObject::connect(slider,SIGNAL(valueChanged(int)), SLOT(setPosition(int)));
-    QObject::connect(spinner0,SIGNAL(valueChanged(int)), SLOT(setPosition(int)));
-    QObject::connect(slider0,SIGNAL(valueChanged(int)), SLOT(setPosition(int)));
+    QObject::connect(spinner,SIGNAL(valueChanged(int)), SLOT(setPos_X(int)));
+    QObject::connect(slider,SIGNAL(valueChanged(int)), SLOT(setPos_X(int)));
+
+    QObject::connect(spinner0,SIGNAL(valueChanged(int)), SLOT(setPos_Y(int)));
+    QObject::connect(slider0,SIGNAL(valueChanged(int)), SLOT(setPos_Y(int)));
 
 
     //halt
@@ -245,12 +246,12 @@ void VideoPlayer::actuation_monitoring()
     layout->addWidget(wakebutton);
     layout->addWidget(get_actual_position);
 
-    layout->addWidget(slider);
-    layout->addWidget(spinner);
-    layout->addWidget(label);
-    layout->addWidget(slider0);
-    layout->addWidget(spinner0);
-    layout->addWidget(label0);
+//    layout->addWidget(slider);
+//    layout->addWidget(spinner);
+//    layout->addWidget(label);
+//    layout->addWidget(slider0);
+//    layout->addWidget(spinner0);
+//    layout->addWidget(label0);
 
     actuation->setLayout(layout);
 
@@ -421,7 +422,7 @@ int8_t VideoPlayer::getIntensity(){
     return Client->getIntensity();
 }
 
-void VideoPlayer::setIntensity(const int intens){
+void VideoPlayer::setIntensity(const int intens){//done
     Client->setIntensity(intens);
 }
 
@@ -450,6 +451,13 @@ void VideoPlayer::set_manual_Mode(){ //done
     Client->setMode(PointMode::MANUAL);
 }
 
-void VideoPlayer::setPos(int coord){
-//    Client->setPos();
+void VideoPlayer::setPos_X(const int X){
+//    Client->setPos(pos);
+    coordinates->__set_x(X);
+
+}
+
+void VideoPlayer::setPos_Y(const int Y){
+//    Client->setPos(Y);
+    coordinates->__set_y(Y);
 }
